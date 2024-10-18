@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\advanced_cpp_with_networking_course\uwebsocket_demo\onlinedoc\build\CMakeFiles\b7dd4079c76d7735098543b2da4339eb\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{E6CDBE65-4AC5-3F50-A23F-ADCFAB1026E7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

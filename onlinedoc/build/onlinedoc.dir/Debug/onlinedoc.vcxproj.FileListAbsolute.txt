@@ -1,0 +1,2 @@
+D:\advanced_cpp_with_networking_course\uwebsocket_demo\onlinedoc\build\Debug\libuv.dll
+D:\advanced_cpp_with_networking_course\uwebsocket_demo\onlinedoc\build\onlinedoc.dir\Debug\onlinedoc.vcxproj.CopyComplete
