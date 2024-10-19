@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Demo</title>
+</head>
+<body>
+    <h1>WebRTC Video Call Demo</h1>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+    <button id="startCall">Start Call</button>
+
+    <script>
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const startCallButton = document.getElementById('startCall');
+
+        const ws = new WebSocket('ws://' + window.location.hostname + ':9001');
+        const peerConnection = new RTCPeerConnection();
+
+        // Get local video stream
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                localVideo.srcObject = stream;
+                stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+            });
+
+        // Handle WebSocket messages (signaling)
+        ws.onmessage = async (event) => {
+            const { type, data } = JSON.parse(event.data);
+
+            if (type === 'offer') {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                ws.send(JSON.stringify({ type: 'answer', data: answer }));
+            } else if (type === 'answer') {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+            } else if (type === 'ice-candidate') {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+            }
+        };
+
+        // Send ICE candidates to the other peer
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                ws.send(JSON.stringify({ type: 'ice-candidate', data: event.candidate }));
+            }
+        };
+
+        // Display remote stream
+        peerConnection.ontrack = (event) => {
+            remoteVideo.srcObject = event.streams[0];
+        };
+
+        // Start call and send offer
+        startCallButton.onclick = async () => {
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            ws.send(JSON.stringify({ type: 'offer', data: offer }));
+        };
+    </script>
+</body>
+</html>
